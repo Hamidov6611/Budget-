@@ -42,6 +42,7 @@ export class CategoryService {
 			},
 			relations: {
 				transactions: true,
+				
 			},
 		})
 	}
@@ -72,14 +73,29 @@ export class CategoryService {
 	}
 
 	async remove(id: number) {
-    const category = await this.categoryRepository.findOne({
-      where: {
-        id
-      }
-    })
+		const category = await this.categoryRepository.findOne({
+			where: {
+				id,
+			},
+		})
 
-    if(!category) throw new NotFoundException("This category are not found")
+		if (!category) throw new NotFoundException('This category are not found')
 
 		return await this.categoryRepository.delete(id)
 	}
+
+	async sortByCategory(id: number) {
+		const category = await this.categoryRepository.find({
+			where: {
+				id,
+			},
+			relations: {
+				transactions: true
+			}
+		})
+		console.log(category)
+		return category
+	}
+
+	
 }

@@ -30,11 +30,17 @@ export class TransactionController {
 		return this.transactionService.create(createTransactionDto, +req.user.id)
 	}
 
-  @Get(':type/find')
-  @UseGuards(JwtAuthGuard)
-  findAlByType(@Req() req, @Param('type') type: string) {
-    return  this.transactionService.findAlByType(+req.user.id, type)
-  }
+	@Get(':type/find')
+	@UseGuards(JwtAuthGuard)
+	findAlByType(@Req() req, @Param('type') type: string) {
+		return this.transactionService.findAlByType(+req.user.id, type)
+	}
+
+	@Get('/type/:transactionType')
+	@UseGuards(JwtAuthGuard)
+	sortByType(@Param("transactionType") transactionType: string, @Req() req) {
+		return this.transactionService.sortByType(transactionType, +req.user.id)
+	}
 
 	@Get('pagination')
 	@UseGuards(JwtAuthGuard)

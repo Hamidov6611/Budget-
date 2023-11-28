@@ -113,4 +113,15 @@ export class TransactionService {
 
 		return total 
 	}
+
+	async sortByType(type: string, id: number) {
+		return await this.transactionRepository.find({
+			where: {
+				type,
+				user: {id}
+			},
+		})
+
+	}
+	
 }

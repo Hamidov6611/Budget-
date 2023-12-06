@@ -26,8 +26,12 @@ export class TransactionController {
 	// @UsePipes(new ValidationPipe())
 	@UseGuards(JwtAuthGuard)
 	create(@Body() createTransactionDto: CreateTransactionDto, @Req() req) {
-		console.log(req.user)
 		return this.transactionService.create(createTransactionDto, +req.user.id)
+	}
+
+	@Get('/date/:start/:end')
+	sortByDate(@Param('start') start: Date, @Param('end') end: Date) {
+		return this.transactionService.sortByDate(start, end)
 	}
 
 	@Get(':type/find')
@@ -38,7 +42,7 @@ export class TransactionController {
 
 	@Get('/type/:transactionType')
 	@UseGuards(JwtAuthGuard)
-	sortByType(@Param("transactionType") transactionType: string, @Req() req) {
+	sortByType(@Param('transactionType') transactionType: string, @Req() req) {
 		return this.transactionService.sortByType(transactionType, +req.user.id)
 	}
 

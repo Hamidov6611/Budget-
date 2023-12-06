@@ -6,9 +6,8 @@ import {
 import { CreateTransactionDto } from './dto/create-transaction.dto'
 import { UpdateTransactionDto } from './dto/update-transaction.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Between, Repository } from 'typeorm'
 import { Transaction } from './entities/transaction.entity'
-
 @Injectable()
 export class TransactionService {
 	constructor(
@@ -27,8 +26,6 @@ export class TransactionService {
 
 		if (!newTransaction)
 			throw new BadRequestException('Something went wrong...')
-		console.log(createTransactionDto)
-		console.log(id)
 
 		return await this.transactionRepository.save(newTransaction)
 	}
@@ -39,7 +36,7 @@ export class TransactionService {
 				user: { id },
 			},
 			relations: {
-				category: true
+				category: true,
 			},
 			order: {
 				createdAt: 'DESC',
@@ -82,46 +79,58 @@ export class TransactionService {
 	}
 
 	async findAllWithPagination(id: number, page: number, limit: number) {
-    const skip = (page - 1) * limit;
+		const skip = (page - 1) * limit
 		const transactions = await this.transactionRepository.find({
 			where: {
 				user: { id },
 			},
-      relations: {
-        category: true,
-        user: true
-      },
-      order: {
-        createdAt: 'DESC'
-      },
-      take: limit,
-      skip: skip
+			relations: {
+				category: true,
+				user: true,
+			},
+			order: {
+				createdAt: 'DESC',
+			},
+			take: limit,
+			skip: skip,
 		})
 
-    return {data: transactions}
+		return { data: transactions }
 	}
 
 	async findAlByType(id: number, type: string) {
 		const transactions = await this.transactionRepository.find({
 			where: {
-				user: {id},
-				type
-			}
+				user: { id },
+				type,
+			},
 		})
 
-		const total = transactions.reduce((acc, obj) => acc + obj.amount , 0)
+		const total = transactions.reduce((acc, obj) => acc + obj.amount, 0)
 
-		return total 
+		return total
+	}
+
+	async getByUser(id: number) {
+		// const user = UserRepository.
 	}
 
 	async sortByType(type: string, id: number) {
 		return await this.transactionRepository.find({
 			where: {
 				type,
-				user: {id}
+				user: { id },
 			},
 		})
-
 	}
-	
+
+	// get by Date data
+	async sortByDate(start: Date, end: Date) {
+		const transactions = await this.transactionRepository.find({
+			where: {
+				createdAt: Between(start, end),
+			},
+		})
+		return transactions
+	}
 }

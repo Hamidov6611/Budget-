@@ -72,9 +72,7 @@ export class TransactionService {
 		const transaction = await this.transactionRepository.findOne({
 			where: { id },
 		})
-
 		if (!transaction) throw new NotFoundException('Transaction not found')
-
 		return await this.transactionRepository.delete(id)
 	}
 
